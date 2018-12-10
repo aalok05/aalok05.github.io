@@ -1,8 +1,6 @@
 title: Aalok's Blog
 author: Aalok Singh
-email: aalok_2@live.com
-description: > # this means to ignore newlines until "twitter_username:"
-  All content written by me is by default released freely under the [WTFPL](www.wtfpl.net).
+email: aalok_2@live.com 
 
 # social links
 twitter_username: devaalok
