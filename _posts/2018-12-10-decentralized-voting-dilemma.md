@@ -32,7 +32,7 @@ At the same time, the system should be self tallying so that any one authority i
 
 ### zk-SNARKS
 
-![Transaction types in Zcash](https://github.com/aalok05/aalok05.github.io/blob/master/_images/zcash.PNG)
+![Transaction types in Zcash](/assets/images/zcash.PNG)
 
 [Voting using Zero knowledge proofs](https://eprint.iacr.org/2017/585.pdf) are of immense help in a scenario where transactions (votes) need to be private but verifiable. The white paper linked before details how Internet voting can be done using popular zk proof based payment system called [Zcash](https://z.cash/), including anonymous voter registration. 
 
@@ -49,7 +49,7 @@ Here, we have to compromise a little bit, having a list of eligible voter addres
 
 ### Ring Signatures
 
-![Ring signatures](https://github.com/aalok05/aalok05.github.io/blob/master/_images/Ring-signature.svg)
+![Ring signatures](/assets/images/Ring-signature.svg)
 
 Ring signatures are great for decentralized voting with voter anonymity. They allow for signatures to be endorsed by a group of keys without revealing which particular key is the signer. Popular cryptocurrency [Monero](https://ww.getmonero.org/) uses ring signatures. 
 Two great variants of ring signatures are linkable and traceable ring signatures.
