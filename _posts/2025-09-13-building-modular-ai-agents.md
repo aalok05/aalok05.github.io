@@ -12,7 +12,7 @@ author:  "Aalok Singh"
 
 ## The Problem: Monolithic AI Systems
 
-Most AI systems start simple but quickly become unwieldy monoliths. Whether you're building chatbots, RAG systems, or AI assistants, you've probably experienced this evolution:
+Most AI solutions start simple but quickly become unwieldy monoliths. Whether you're building chatbots, RAG systems, or AI assistants, you've probably experienced this evolution (although this is a problem with non AI projects as well):
 
 **Day 1:** "Let's build a simple AI assistant that can answer questions about our docs"
 
@@ -22,20 +22,17 @@ Most AI systems start simple but quickly become unwieldy monoliths. Whether you'
 
 ### Why This Happens
 
-**Knowledge Base Coupling:** Everything gets thrown into one giant vector database
-
-**Pipeline Rigidity:** One retrieval system tries to handle all content types
-
-**Prompt Bloat:** A single "universal" prompt grows to handle every edge case
-
-**Integration Mess:** One API endpoint doing everything becomes impossible to maintain
+-   Knowledge Base Coupling:  Everything gets thrown into one giant vector database
+-   Pipeline Rigidity:  One retrieval system tries to handle all content types
+-   Prompt Bloat:  A single "universal" prompt grows to handle every edge case
+-   Integration Mess:  One API endpoint doing everything becomes impossible to maintain
 
 ### The Real Cost
 
-- **Development slowdown:** Teams can't work independently
-- **Testing nightmare:** Need to spin up everything to test one feature
-- **Deployment risk:** Any change affects the entire system
-- **Scaling inefficiency:** Resource usage driven by your heaviest component
+-   Development slowdown:  Teams can't work independently
+-   Testing nightmare:  Need to spin up everything to test one feature
+-   Deployment risk:  Any change affects the entire system
+-   Scaling inefficiency:  Resource usage driven by your heaviest component
 
 ## The Solution: Plugin Architecture
 
@@ -73,13 +70,10 @@ class BaseModularAgent(ABC):
 
 ### Core Principles
 
-**Single Responsibility:** Each plugin does one thing well
-
-**Self-Contained:** Plugins manage their own resources and dependencies
-
-**Discoverable:** System automatically finds and loads available plugin agents
-
-**Composable:** Plugins can work together or independently
+-   Single Responsibility:  Each plugin does one thing well
+-   Self-Contained:  Plugins manage their own resources and dependencies
+-   Discoverable:  System automatically finds and loads available plugin agents
+-   Composable:  Plugins can work together or independently
 
 ## Dynamic Discovery: Finding Your Plugin Agents
 
@@ -99,6 +93,7 @@ async def find_and_initialize_agents(directory: str):
                 if (isinstance(obj, type) and 
                     issubclass(obj, BaseModularAgent) and 
                     obj != BaseModularAgent):
+                    
                     # Create instance and initialize the agent
                     agents = obj()
                     await agents.initialize()
@@ -154,18 +149,18 @@ async def main():
             # Load the module
             module = importlib.import_module(file[:-3])
             
-            # Find capability classes
+            # Find agent classes
             for item in dir(module):
                 obj = getattr(module, item)
                 if (isinstance(obj, type) and 
                     issubclass(obj, BaseModularAgent) and 
                     obj != BaseModularAgent):
                     # Create instance and initialize the agent
-                    capability = obj()
-                    await capability.initialize()
+                    pluginAgent = obj()
+                    await pluginAgent.initialize()
                     
-                    metadata = capability.get_metadata()
-                    agentModules[metadata["name"]] = capability
+                    metadata = pluginAgent.get_metadata()
+                    agentModules[metadata["name"]] = pluginAgent
                     print(f"Loaded agent: {metadata['description']}")
     
     # Convert each plugin agent into a tool
@@ -178,7 +173,7 @@ async def main():
         )
         tools.append(tool)
     
-    # Create orchestrator agent with all capability tools
+    # Create orchestrator agent with all plugin agents as tools
     orchestrator = Agent(
         name="AI Assistant",
         instructions="""You are an intelligent assistant that can help with various tasks. 
@@ -193,18 +188,18 @@ async def main():
     await Runner.run(orchestrator, user_input)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main()) 
 ```
 
 ## Why This Approach Works
 
 **For Developers:**
-- Build and test individual capabilities independently
+- Build and test individual agents independently
 - Add new features without touching existing code
 - Debug issues in isolation
 
 **For Operations:**
-- Deploy updates to specific capabilities only
+- Deploy updates to specific agents only
 - Scale resources based on actual usage patterns
 - Monitor and troubleshoot individual components
 
@@ -216,8 +211,8 @@ if __name__ == "__main__":
 ## Getting Started
 
 1. **Identify your AI capabilities** - What different things does your system need to do?
-2. **Create separate plugins** - Build one capability per plugin agent
-3. **Use the discovery pattern** - Let your system automatically find capabilities
+2. **Create separate plugins** - Build one plugin agent per capability 
+3. **Use the discovery pattern** - Let your system automatically find agents
 4. **Start simple** - Begin with basic implementations and evolve
 
 ## The Bottom Line
