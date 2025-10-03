@@ -3,11 +3,10 @@ author: Aalok Singh
 email: aalok_2@live.com 
 
 # social links
-twitter_username: devaalok
+linkedin_username: aalok05
 github_username:  aalok05
 
-
-show_excerpts: false # set to true to show excerpts on the homepage
+show_excerpts: true # set to true to show excerpts on the homepage
 
 # Minima date format
 # refer to http://shopify.github.io/liquid/filters/date/ if you want to customize this
