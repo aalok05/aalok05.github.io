@@ -82,7 +82,7 @@ A single LLM prompt could, theoretically, output DSL. But real-world usage taugh
 -   The DSL had  different subdomains, each requiring its own expert logic.
 -   Errors in DSL syntax needed specialized correction strategies.
 
-This is where the  agentic approach  shines. Instead of one monolithic LLM call, we built a  [multi-agent system coordinated by an Orchestrator Agent.](https://www.linkedin.com/pulse/building-modular-ai-agents-plugin-architecture-aalok-singh-g6ygf)
+This is where the  agentic approach  shines. Instead of one monolithic LLM call, we built a  [multi-agent system coordinated by an Orchestrator Agent.](https://aalok05.github.io/ai/2025/09/13/building-modular-ai-agents.html)
 
 * * * * *
 
@@ -95,7 +95,7 @@ Here's how the system came together:
 -   Knowledge Retrieval (RAG + Azure AI Search)  Users often referred to legacy rules, policies, and code snippets. To handle this, I integrated  semantic search in Azure AI Search. The orchestrator first queries the knowledge base for relevant examples with semantic reranking, injects them into context, and passes them to the helper agents.
 -   Feedback & Correction Loop  If the generated DSL didn't validate, the Orchestrator Agent would trigger a handoff to the  *Validator Agent*, which corrected and finalized the output.
 
-![Birds' eye view of plug and play agentic architecture](../assets/images/modular_agents_diag.png)
+![Birds' eye view of plug and play agentic architecture](/assets/images/modular_agents_diag.png)
 
 ### Learnings Along the Way
 
