@@ -71,7 +71,7 @@ With GPT-5.3-codex, if you reserve even a modest 16K for output and burn 3K on t
 
 ```python
 # The ACTUAL budget formula
-input_context_limit = 272_000           # NOT the 400K total!
+input_context_limit = 272_000           
 system_tokens       = count_tokens(system_prompt)
 reserved            = max_output_tokens + tool_schema_overhead
 remaining           = input_context_limit - system_tokens - reserved
@@ -84,7 +84,7 @@ budget              = int(remaining * safety_fraction)  # 0.80 recommended
 
 ## Pitfall #2: Trimming at the Wrong Boundary
 
-The naïve approach is to just drop the oldest messages until you're under budget. But chat histories aren't a flat list of independent messages - they contain **logical groups** that must stay together:
+The naive approach is to just drop the oldest messages until you're under budget. But chat histories aren't a flat list of independent messages - they contain **logical groups** that must stay together:
 
 ```
 user: "What's the weather in Paris?"
@@ -258,10 +258,8 @@ Run this function **before every agent turn**, and your agent will handle conver
 
 If you're building with the OpenAI Agents SDK (or any LLM framework), these patterns will save you from the most common - and most frustrating - production failures.
 
-The full POC code (Python backend + React visualizer) is available on my GitHub.
+The full POC code (Python backend + React visualizer) is available on my [GitHub](https://github.com/aalok05/AgentSessionManager).
 
-Happy building! 🚀
 
 ---
 
-*#AI #LLM #OpenAI #AgentDevelopment #ContextWindow #SessionManagement #SoftwareEngineering #Python*
