@@ -6,7 +6,7 @@ permalink: /about/
 
 Welcome to Aalok's blog!
 
-This is where I write my random musings on technology, mainly decentralized technology.
+This site is a backup for all the blogs I post on my [LinkedIn](https://linkedin.com/in/aalok05)
 
 This is the base Jekyll theme: [jekyllrb.com](https://jekyllrb.com/)
 
