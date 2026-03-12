@@ -10,8 +10,6 @@ author:  "Aalok Singh"
 
 ---
 
-## The Problem: Monolithic AI Systems
-
 Most AI solutions start simple but quickly become unwieldy monoliths. Whether you're building chatbots, RAG systems, or AI assistants, you've probably experienced this evolution (although this is a problem with non AI projects as well):
 
 **Day 1:** "Let's build a simple AI assistant that can answer questions about our docs"

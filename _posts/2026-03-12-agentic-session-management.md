@@ -10,13 +10,13 @@ author:  "Aalok Singh"
 
 ---
 
-**How to build a production-grade session history manager for LLM agents**
+How to build a production-grade session history manager for LLM agents
 
 ---
 
 ## Where This Comes From
 
-I've been building an agentic solution that involves **multiple sub-agents orchestrated together** - think a main planning agent that delegates to specialised sub-agents for RAG retrieval, tool execution, and code generation. Each sub-agent adds its own system prompt, tool schemas, retrieved documents, and generated code blocks to the conversation. A single user request can fan out into dozens of internal messages before a final answer surfaces.
+I've been building an agentic solution that involves multiple sub-agents orchestrated together - think a main planning agent that delegates to specialised sub-agents for RAG retrieval, tool execution, and code generation. Each sub-agent adds its own system prompt, tool schemas, retrieved documents, and generated code blocks to the conversation. A single user request can fan out into dozens of internal messages before a final answer surfaces.
 
 It worked beautifully in demos. Then real users started having *actual* conversations.
 
@@ -24,9 +24,9 @@ Within 15–20 turns, the context window was full. Users started seeing this in 
 
 > `context limit exceeded`
 
-Not occasionally - **frequently**. And it wasn't because the users were verbose. It was because every tool call, every chunk of RAG context, every block of generated code, and every sub-agent handoff was silently piling up in the session history. A single "generate and fix this code" loop could burn 8,000+ tokens in one turn.
+It was because every tool call, every chunk of RAG context, every block of generated code, and every sub-agent handoff was silently piling up in the session history.
 
-I took a step back and built a dedicated context management engine to solve this for good. This post captures the key learnings, common pitfalls, and practical patterns I discovered. It comes with code you can steal.
+I took a step back and built a dedicated context management engine to solve this for good. This post captures the key learnings, common pitfalls, and practical patterns I discovered.
 
 ---
 
@@ -40,7 +40,7 @@ Let's take the model we're actually using: **GPT-5.3-codex**. It advertises a **
 | **Output** (max completion) | 128,000 |
 | **Total** (input + output) | 400,000 |
 
-That 400K headline number is **not** what you get to play with. The output budget is reserved for the model's response. **Your session history, system prompt, tool schemas, RAG context - all of it must fit inside the 272K *input* limit.** That's the number that matters for session management, and it's the one that will bite you.
+That 400K headline number is **not** what you get to play with. The output budget is reserved for the model's response. **Your session history, system prompt, tool schemas, RAG context - all of it must fit inside the 272K *input* limit.** That's the number that matters for session management.
 
 And 272K still sounds like a lot - until you're running a multi-agent pipeline. Here's what a typical turn looks like under the hood:
 
@@ -63,11 +63,11 @@ Most developers look at the spec sheet - "400K context!" - and assume they have 
 
 | Hidden consumer | Typical cost |
 |---|---|
-| System prompt | 50 - 500 tokens |
+| System prompt | 1000 - 1500 tokens |
 | Tool/function schemas (multiple agents) | 1,000 - 5,000 tokens |
 | Reserved output tokens | up to 128,000 tokens |
 
-With GPT-5.3-codex, if you reserve even a modest 16K for output and burn 3K on tool schemas across your sub-agents, **your real budget is ~252K**, not 272K - and nowhere near the 400K on the marketing page.
+With GPT-5.3-codex, if you reserve even a modest 16K for output and burn 3K on tool schemas across your sub-agents, **your real budget is ~252K**, not 272K.
 
 ```python
 # The ACTUAL budget formula
@@ -75,7 +75,7 @@ input_context_limit = 272_000           # NOT the 400K total!
 system_tokens       = count_tokens(system_prompt)
 reserved            = max_output_tokens + tool_schema_overhead
 remaining           = input_context_limit - system_tokens - reserved
-budget              = int(remaining * safety_fraction)  # 0.90 recommended
+budget              = int(remaining * safety_fraction)  # 0.80 recommended
 ```
 
 **Lesson:** Always compute your budget against the **input** context limit, not the total. And never assume the full input window is yours either - subtract system prompts, tool schemas, and output reservations first.
@@ -216,10 +216,10 @@ I'd strongly recommend building a lightweight dashboard when developing agents. 
 
 Even with precise token counting, there's always a margin of error - tiktoken counts don't perfectly match the model's internal tokenizer, and API overhead adds a few tokens per message.
 
-A simple **0.90× safety fraction** on the remaining budget gives you a comfortable 10% buffer:
+A simple **0.80× safety fraction** on the remaining budget gives you a comfortable 10% buffer:
 
 ```python
-budget = int(remaining * 0.90)
+budget = int(remaining * 0.80)
 ```
 
 This single line has prevented more crashes than any other piece of code in the project.
@@ -232,7 +232,7 @@ Here's the full strategy distilled into 9 steps:
 
 1. **Count tokens** for system prompt + full session history
 2. **Reserve** output tokens + tool-schema overhead
-3. **Apply safety fraction** (0.90) to the remaining budget
+3. **Apply safety fraction** (0.80) to the remaining budget
 4. **Keep the newest messages** that fit within budget
 5. **Align trim boundary** forward to the next `role == "user"` message
 6. **Summarize** the trimmed messages using an LLM (best-effort)
